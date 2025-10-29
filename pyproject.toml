@@ -55,6 +55,7 @@ addopts = [
     "--cov=microevents",
     "--cov-report=term-missing",
     "--cov-report=html",
+    "--cov-report=xml",
     "--cov-fail-under=90",
     "--strict-markers",
     "-v"
