@@ -17,9 +17,11 @@ Tiny **sync + async** event signals for Python with a decorator-based API.
 
 ```bash
 pip install microevents
+```
 
 or
 
+```bash
 uv add microevents
 ```
 
@@ -48,18 +50,24 @@ emit_sync("user_registered", user_id=42)
 ## Programmatic registration & EventBus
 
 ```python
-from microevents import on, off, list_receivers, EventBus
+from microevents import on, off, list_receivers, EventBus, emit_sync
 
-def log(event, *a, **k): print("LOG", event, a, k)
+
+def log(event, *a, **k):
+    print("LOG", event, a, k)
+
 
 on("ping", log, priority=10)
 
 emit_sync("ping")
 
 bus = EventBus()
-bus.on("my_event", log, once=True)
+bus.on("my_event", log, once=True)  # auto-unsubscribed after first call
 
-bus.emit_sync("my_event")  # second call does nothing
+bus.emit_sync(
+    "my_event", 1, 2, 3, a=1, b=2
+)  # prints LOG my_event (1, 2, 3) {'a': 1, 'b': 2}
+bus.emit_sync("my_event")  # second call does nothing because it was unsubscribed
 ```
 
 ## API
@@ -86,8 +94,7 @@ wrap your handler or create a small wrapper that catches/logs exceptions.
 ## Testing
 
 ```bash
-pip install -U pytest
-pytest
+uv run pytest
 ```
 
 ## Development

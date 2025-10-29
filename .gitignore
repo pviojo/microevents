@@ -150,5 +150,8 @@ cython_debug/
 # uv
 uv.lock
 
+# cli
+cli.py
 
+# publishing
 PUBLISHING.md
