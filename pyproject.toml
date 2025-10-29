@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "microevents"
-version = "0.1.0"
+version = "0.1.1"
 description = "Tiny sync+async event signals for Python."
 readme = "README.md"
 authors = [{name = "Pablo Viojo", email = "pviojo@gmail.com"}]
@@ -83,3 +83,7 @@ exclude_lines = [
     "if TYPE_CHECKING:",
     "@abstractmethod"
 ]
+
+
+[tool.setuptools.package-data]
+microevents = ["py.typed"]
