@@ -247,12 +247,11 @@ This keeps handler code clean while ensuring dispatch continues.
 ```python
 import asyncio
 import inspect
-from typing import List
 from microevents import EventBus
 
 class SafeEventBus(EventBus):
     async def emit(self, event: str, *args, **kwargs):
-        errors: List[BaseException] = []
+        errors: list[BaseException] = []
         # copy and order handlers like the base class does
         handlers = sorted(self._handlers.get(event, []))
         to_remove = []
