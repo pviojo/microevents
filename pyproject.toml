@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "microevents"
-version = "0.1.2"
+version = "0.1.3"
 description = "Tiny sync+async event signals for Python."
 readme = "README.md"
 authors = [{name = "Pablo Viojo", email = "pviojo@gmail.com"}]
