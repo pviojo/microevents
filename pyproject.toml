@@ -29,7 +29,7 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/pviojo/microevents"
+Homepage = "https://pviojo.github.io/microevents"
 Repository = "https://github.com/pviojo/microevents"
 Issues = "https://github.com/pviojo/microevents/issues"
 
