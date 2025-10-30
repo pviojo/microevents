@@ -16,16 +16,46 @@
       rel="stylesheet"
       href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css"
     />
+    <style>
+      .shiki {
+        background-color: #fafafa !important;
+        border-radius: 12px !important;
+        border: 1px solid #f5f5f5 !important;
+      }
+    </style>
   </head>
   <body>
     <div id="app"></div>
-    <script>
-      window.$docsify = {
-        name: 'microevents',
+
+    <script type="module">
+      import 'https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js';
+      // import themes and languages from esm.sh
+      import bash from 'https://esm.sh/@shikijs/langs@1/bash';
+      import python from 'https://esm.sh/@shikijs/langs@1/python';
+      import theme from 'https://esm.sh/@shikijs/themes@1/github-light';
+
+      globalThis.$docsify = {
         repo: 'https://github.com/pviojo/microevents',
+        search: 'auto', // default
+        copyCode: {
+          buttonText: 'Copy to clipboard',
+          errorText: 'Error',
+          successText: 'Copied',
+        },
+        shiki: {
+          theme,
+          langs: [bash, python],
+        },
       };
     </script>
+
     <!-- Docsify v4 -->
     <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+    <script src="//cdn.jsdelivr.net/npm/docsify-copy-code@2"></script>
+    <script src="//cdn.jsdelivr.net/npm/vue@2/dist/vue.min.js"></script>
+    <script
+      type="module"
+      src="//cdn.jsdelivr.net/npm/docsify-shiki@v1"
+    ></script>
   </body>
 </html>

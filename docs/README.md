@@ -1,4 +1,4 @@
-# microevents
+# Microevents for Python
 
 [![codecov](https://codecov.io/github/pviojo/microevents/branch/main/graph/badge.svg?token=CVTS3VP5OS)](https://codecov.io/github/pviojo/microevents)
 [![PyPI](https://img.shields.io/pypi/v/microevents.svg)](https://pypi.org/project/microevents/)
