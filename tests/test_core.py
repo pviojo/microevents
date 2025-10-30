@@ -1,17 +1,18 @@
 """Tests for microevents core functionality."""
 
 import asyncio
+
 import pytest
 
 from microevents import (
-    receiver,
+    EventBus,
+    clear,
     emit,
     emit_sync,
-    on,
-    off,
-    clear,
     list_receivers,
-    EventBus,
+    off,
+    on,
+    receiver,
 )
 
 

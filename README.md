@@ -96,16 +96,16 @@ wrap your handler or create a small wrapper that catches/logs exceptions.
 ## 🔧 Advanced Usage
 
 ### Handler priority
-Handlers can be given a **priority**. Higher numbers run first.  
+Handlers can be given a **priority**. Higher numbers run first.
 Within the same priority, registration order is preserved.
 
 ```python
 from microevents import on, emit_sync
 
-def handler_low(event, *a, **k): 
+def handler_low(event, *a, **k):
     print("low priority")
 
-def handler_high(event, *a, **k): 
+def handler_high(event, *a, **k):
     print("high priority")
 
 on("task_done", handler_low, priority=0)
@@ -137,7 +137,7 @@ emit_sync("hello")  # no effect second time
 ---
 
 ### Isolated `EventBus`
-By default, all events use a global bus.  
+By default, all events use a global bus.
 You can also create independent buses — useful for **plugins, tests, or multiple apps**.
 
 ```python
@@ -179,8 +179,8 @@ print("removed:", removed)  # 1
 ---
 
 ### Async + sync mixed
-Both **sync** and **async** handlers can listen to the same event.  
-Async handlers are awaited when using `await emit(...)`,  
+Both **sync** and **async** handlers can listen to the same event.
+Async handlers are awaited when using `await emit(...)`,
 and run in fire-and-forget mode with `emit_sync(...)` (scheduled if a loop is running).
 
 ```python
@@ -206,7 +206,7 @@ emit_sync("mix")
 
 ### 🛡️ Error handling strategies
 
-By default, **exceptions raised by handlers propagate** and will stop dispatch.  
+By default, **exceptions raised by handlers propagate** and will stop dispatch.
 Choose one of the following strategies if you want to **isolate failures** so that one bad handler doesn’t break others.
 
 #### 1) Wrap handlers when registering (simple & explicit)
@@ -237,7 +237,7 @@ on("calc", safe(robust))
 emit_sync("calc", 42)
 ```
 
-Pros: explicit, minimal.  
+Pros: explicit, minimal.
 Cons: you must remember to wrap each handler.
 
 #### 2) Use a custom EventBus that isolates errors (centralized control)
@@ -321,6 +321,31 @@ uv venv --python 3.8 .venv
 source .venv/bin/activate
 
 uv sync
+```
+
+### Pre-commit hooks
+
+Install pre-commit hooks to run tests and linting before each commit:
+
+```bash
+# Install dependencies (includes pre-commit)
+uv sync
+
+# Install the git hooks
+uv run pre-commit install
+
+# (Optional) Run hooks on all files
+uv run pre-commit run --all-files
+```
+
+Now every commit will automatically:
+- Run tests (must pass with 90%+ coverage)
+- Format code with ruff
+- Check for common issues
+
+To bypass hooks (not recommended):
+```bash
+git commit --no-verify
 ```
 
 ## Testing

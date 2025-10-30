@@ -14,46 +14,46 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
-    
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
-    
+
     - name: Install uv
       uses: astral-sh/setup-uv@v4
-    
+
     - name: Install dependencies
       run: |
         uv venv
         uv sync
-    
+
     - name: Run tests with coverage
       run: uv run pytest
-    
+
   build:
     needs: test
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: "3.11"
-    
+
     - name: Install build dependencies
       run: |
         python -m pip install --upgrade pip
         pip install build
-    
+
     - name: Build package
       run: python -m build
-    
+
     - name: Store the distribution packages
       uses: actions/upload-artifact@v4
       with:
@@ -68,13 +68,13 @@ jobs:
       url: https://pypi.org/p/microevents
     permissions:
       id-token: write
-    
+
     steps:
     - name: Download all the dists
       uses: actions/download-artifact@v4
       with:
         name: python-package-distributions
         path: dist/
-    
+
     - name: Publish package to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1

@@ -1,7 +1,9 @@
 """Tests for EventBus functionality."""
 
 import asyncio
+
 import pytest
+
 from microevents import EventBus
 
 

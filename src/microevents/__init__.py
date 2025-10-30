@@ -17,13 +17,13 @@ Features:
 """
 
 from .core import (
-    receiver,
+    clear,
     emit,
     emit_sync,
-    on,
-    off,
-    clear,
     list_receivers,
+    off,
+    on,
+    receiver,
 )
 from .event_bus import EventBus
 

@@ -8,7 +8,7 @@ import asyncio
 import inspect
 import threading
 from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, List, Optional, Protocol, Tuple
+from typing import Any, Callable, Protocol
 
 HandlerFunc = Callable[..., Any]
 MaybeAwaitable = Any  # result of handler call; may be awaitable
@@ -25,7 +25,7 @@ class _SupportsEventSignature(Protocol):
 @dataclass(order=True)
 class _Handler:
     # Sorting fields (priority descending, then order ascending)
-    sort_index: Tuple[int, int] = field(init=False, repr=False)
+    sort_index: tuple[int, int] = field(init=False, repr=False)
     priority: int
     order: int
     func: HandlerFunc = field(compare=False)
@@ -55,7 +55,7 @@ class EventBus:
         Initialize a new EventBus instance.
         """
         self._lock = threading.RLock()
-        self._handlers: Dict[str, List[_Handler]] = {}
+        self._handlers: dict[str, list[_Handler]] = {}
         self._counter = 0  # registration order
 
     # -------------------- registration API --------------------
@@ -88,12 +88,10 @@ class EventBus:
 
         with self._lock:
             self._counter += 1
-            h = _Handler(
-                priority=priority, order=self._counter, func=handler, once=once
-            )
+            h = _Handler(priority=priority, order=self._counter, func=handler, once=once)
             self._handlers.setdefault(event, []).append(h)
 
-    def off(self, event: str, handler: Optional[HandlerFunc] = None) -> int:
+    def off(self, event: str, handler: HandlerFunc | None = None) -> int:
         """
         Unregister handlers. If `handler` is None, remove all handlers for `event`.
         Returns the number of removed handlers.
@@ -123,7 +121,7 @@ class EventBus:
         with self._lock:
             self._handlers.clear()
 
-    def list_receivers(self, event: str) -> List[HandlerFunc]:
+    def list_receivers(self, event: str) -> list[HandlerFunc]:
         """Return the list of functions registered for `event` (no order guaranteed)."""
         with self._lock:
             return [h.func for h in self._handlers.get(event, [])]
@@ -175,7 +173,7 @@ class EventBus:
         handlers.sort()
 
         # Call each handler; await if necessary
-        to_remove: List[_Handler] = []
+        to_remove: list[_Handler] = []
         for h in handlers:
             result = h.call(event, *args, **kwargs)
             if inspect.isawaitable(result):
