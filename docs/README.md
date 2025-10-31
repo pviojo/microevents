@@ -6,7 +6,7 @@
 
 Tiny **sync + async** event signals for Python with a decorator-based API.
 
-- `@receiver(event: str)` decorator to register handlers.
+- `@receiver(event: str, bus: EventBus | None = None, priority: int = 0, once: bool = False)` decorator to register handlers.
 - `emit(event, *args, **kwargs)` is **async**: awaits async handlers and calls sync ones.
 - `emit_sync(...)` helper to use from non-async code.
 - Programmatic `on()`, `off()`, `clear()`, and `list_receivers()`.

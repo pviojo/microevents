@@ -76,10 +76,10 @@ bus.emit_sync("my_event")  # second call does nothing because it was unsubscribe
 
 ### Decorators & functions (module-level global bus)
 
-- `@receiver(event: str, *, priority: int = 0, once: bool = False)`
+- `@receiver(event: str, bus: EventBus | None = None, priority: int = 0, once: bool = False)`
 - `async def emit(event: str, *args, **kwargs) -> None`
 - `def emit_sync(event: str, *args, **kwargs) -> None | asyncio.Task`
-- `def on(event: str, handler, *, priority: int = 0, once: bool = False) -> None`
+- `def on(event: str, handler, priority: int = 0, once: bool = False) -> None`
 - `def off(event: str, handler = None) -> int` (returns removed count; if `handler` is None, removes all)
 - `def list_receivers(event: str) -> list`
 - `def clear() -> None`

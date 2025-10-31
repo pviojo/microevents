@@ -78,9 +78,17 @@ def list_receivers(event: str) -> List[HandlerFunc]:
     return _default_bus.list_receivers(event)
 
 
+def _get_bus(bus: Optional[EventBus] = None) -> EventBus:
+    return bus or _default_bus
+
+
 # Decorator
 def receiver(
-    event: str, *, priority: int = 0, once: bool = False
+    event: str,
+    *,
+    priority: int = 0,
+    once: bool = False,
+    bus: Optional[EventBus] = None,
 ) -> Callable[[HandlerFunc], HandlerFunc]:
     """
     Decorator to register a function as a handler for `event`.
@@ -92,6 +100,8 @@ def receiver(
                                   Defaults to 0. Higher priority handlers run first.
                                   For equal priority, registration order is preserved.
         once (bool, optional): Whether the handler should be called only once. Defaults to False.
+        bus (EventBus, optional): The event bus to register the handler for.
+                                  Defaults to None. If None, the default bus is used.
 
     Returns:
         Callable[[HandlerFunc], HandlerFunc]: The decorator function.
@@ -101,7 +111,7 @@ def receiver(
     def my_handler(event, *args, **kwargs):
         print("my_handler called with args: ", args, "kwargs: ", kwargs)
     """
-    return _default_bus.receiver(event, priority=priority, once=once)
+    return _get_bus(bus).receiver(event, priority=priority, once=once)
 
 
 # Dispatch
