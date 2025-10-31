@@ -66,6 +66,29 @@ def test_priority_and_once():
     assert out == [2, 1]
 
 
+def test_receiver_decorator_with_bus():
+    """Test receiver decorator with bus parameter."""
+    clear()
+    another_bus = EventBus()
+    out = []
+
+    @receiver("evt")  # Registered on default bus
+    def handle_default_bus(event, x):  # pylint: disable=unused-argument
+        out.append("default_bus")
+        out.append(x)
+
+    @receiver("evt", bus=another_bus)  # Registered on another bus
+    def handle_another_bus(event, x):  # pylint: disable=unused-argument
+        out.append("another_bus")
+        out.append(x)
+
+    emit_sync("evt", 1)  # Should only be called on default bus
+    assert out == ["default_bus", 1]
+    out.clear()
+    another_bus.emit_sync("evt", 2)  # Should only be called on another bus
+    assert out == ["another_bus", 2]
+
+
 def test_off_and_list():
     """Test off() and list_receivers()."""
     clear()
