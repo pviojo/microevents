@@ -31,6 +31,17 @@ class _Handler:
     func: HandlerFunc = field(compare=False)
     once: bool = field(default=False, compare=False)
 
+    claimed: bool = field(default=False, init=False, compare=False)
+
+    def matches(self, handler: HandlerFunc) -> bool:
+        if self.func is handler:
+            return True
+        if inspect.ismethod(self.func) and inspect.ismethod(handler):
+            return self.func.__self__ is handler.__self__ and self.func.__func__ is handler.__func__
+        if inspect.isbuiltin(self.func) and inspect.isbuiltin(handler):
+            return self.func == handler
+        return False
+
     def __post_init__(self) -> None:
         """
         Initialize the handler.
@@ -113,7 +124,7 @@ class EventBus:
                 self._handlers[event] = []
                 return removed
             before = len(lst)
-            self._handlers[event] = [h for h in lst if h.func is not handler]
+            self._handlers[event] = [h for h in lst if not h.matches(handler)]
             return before - len(self._handlers[event])
 
     def clear(self) -> None:
@@ -173,21 +184,19 @@ class EventBus:
         handlers.sort()
 
         # Call each handler; await if necessary
-        to_remove: list[_Handler] = []
         for h in handlers:
+            if h.once:
+                with self._lock:
+                    if h.claimed:
+                        continue
+                    h.claimed = True
+                    current = self._handlers.get(event, [])
+                    if h in current:
+                        current.remove(h)
+
             result = h.call(event, *args, **kwargs)
             if inspect.isawaitable(result):
                 await result
-
-            if h.once:
-                to_remove.append(h)
-
-        # Remove once-handlers after dispatch
-        if to_remove:
-            with self._lock:
-                current = self._handlers.get(event, [])
-                # Remove by identity
-                self._handlers[event] = [x for x in current if x not in to_remove]
 
     def emit_sync(self, event: str, *args: Any, **kwargs: Any):
         """
