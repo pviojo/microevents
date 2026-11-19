@@ -305,3 +305,50 @@ def test_event_bus_once_handler_removed_after_call():
     # Second call should not trigger handler
     bus.emit_sync("evt")
     assert out == ["called"]  # Still just one call
+
+
+async def test_overlapping_emissions_share_once_registration():
+    bus = EventBus()
+    calls = []
+
+    @bus.receiver("evt", priority=1)
+    async def yield_after_snapshot(event):
+        await asyncio.sleep(0)
+
+    @bus.receiver("evt", once=True)
+    async def handler(event):
+        calls.append(event)
+        await asyncio.sleep(0)
+
+    await asyncio.gather(bus.emit("evt"), bus.emit("evt"))
+    assert calls == ["evt"]
+
+
+def test_exception_consumes_only_once_handlers_already_invoked():
+    bus = EventBus()
+    calls = []
+    bus.on("evt", calls.append, once=True)
+
+    @bus.receiver("evt", once=True)
+    def fail(event):
+        raise ValueError("failed")
+
+    bus.on("evt", lambda event: calls.append("last"), once=True)
+    with pytest.raises(ValueError, match="failed"):
+        bus.emit_sync("evt")
+    bus.emit_sync("evt")
+    assert calls == ["evt", "last"]
+
+
+def test_off_matches_bound_method_on_specific_instance():
+    bus = EventBus()
+
+    class Listener:
+        def handle(self, event):
+            pass
+
+    first, second = Listener(), Listener()
+    bus.on("evt", first.handle)
+    bus.on("evt", second.handle)
+    assert bus.off("evt", first.handle) == 1
+    assert bus.list_receivers("evt") == [second.handle]
